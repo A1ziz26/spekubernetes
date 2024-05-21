@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: fluentd-config
+  namespace: default
 data:
   fluent.conf: |
     <source>
@@ -69,17 +70,24 @@ spec:
         - name: FLUENT_ELASTICSEARCH_HOST
           value: "192.168.49.2"  # Replace with your Minikube IP address
         - name: FLUENT_ELASTICSEARCH_PORT
-          value: "32000"          # Use the NodePort you specified for Elasticsearch
+          value: "32000"
+
         volumeMounts:
         - name: varlog
           mountPath: /var/log
         - name: config-volume
           mountPath: /fluentd/etc/fluent.conf
           subPath: fluent.conf
+        - name: logextramount
+          mountPath: /var/lib/docker/containers
+          readOnly: true
       volumes:
       - name: varlog
         hostPath:
           path: /var/log
+      - name: logextramount
+        hostPath:
+          path: /var/lib/docker/containers
       - name: config-volume
         configMap:
           name: fluentd-config
