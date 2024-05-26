@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: mydiningfrontend
-        image: vishwatejach/mydiningfrontend:latest
+        image: azizuchiha/mydiningfrontend:v3
         ports:
         - containerPort: 3000  # Adjust the port if your React app runs on a different port
 ---
