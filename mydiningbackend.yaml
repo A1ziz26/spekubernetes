@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydiningbackend
+spec:
+  selector:
+    matchLabels:
+      app: mydiningbackend
+  template:
+    metadata:
+      labels:
+        app: mydiningbackend
+    spec:
+      containers:
+      - name: mydining-backend1
+        image: vishwatejach/updbackend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MYSQL_HOST
+          value: mysql
+        - name: MYSQL_PORT
+          value: "3306"
+        - name: MYSQL_DB_NAME
+          value: mydining
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mydiningsecret
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mydiningsecret
+              key: password
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "300Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+        
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mydiningbackend
+spec:
+  type: NodePort
+  selector:
+    app: mydiningbackend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    nodePort: 30500
